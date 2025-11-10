@@ -1,19 +1,18 @@
 import express, { Express } from "express";
 import {
-    getUsersPage,
-    postCreateUser, postDeleteUser, getViewUser, postUpdateUser
+    createUser, getUsersPageWithPaginate, getUsersPage,
+    updateUser, getViewUser, deleteUser
 } from "controllers/user.controller";
 
 const router = express.Router();
 
 const webRoute = (app: Express) => {
-    router.get("/user", getUsersPage);
-    router.post("/user", postCreateUser);
-    router.post("/user/:id", postDeleteUser);
-    router.get("/user/:id", getViewUser);
-    router.post("/user/:id", postUpdateUser);
-
-
+    router.post("/users", createUser);
+    router.get("/users", getUsersPageWithPaginate);
+    router.get("/users/all", getUsersPage);
+    router.get("/users/:id", getViewUser);
+    router.put("/users/:id", updateUser);
+    router.delete("/users/:id", deleteUser);
 
     app.use("/", router);
 };
