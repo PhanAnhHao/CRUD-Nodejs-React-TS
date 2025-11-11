@@ -13,7 +13,6 @@ const { Header } = Layout;
 const AppHeader = () => {
     const location = useLocation();
 
-    // highlight menu: exact match trước, nếu không dùng startsWith
     const selectedKey =
         routes.find(r => r.path === location.pathname)?.path ||
         routes.find(r => location.pathname.startsWith(r.path))?.path;

@@ -45,8 +45,14 @@ const handleCreateUser = async (
 
 // Get all users
 const handleGetAllUsers = async () => {
-    return await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+        include: {
+            role: true,
+        },
+    });
+    return users.map(({ password, ...rest }) => rest); // destructuring
 };
+;
 
 // Pagination
 const handleGetUsersWithPaginate = async (currentPage: number, pageSize: number) => {
