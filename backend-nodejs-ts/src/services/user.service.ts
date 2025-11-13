@@ -33,7 +33,7 @@ const handleCreateUser = async (
                 address,
                 phone,
                 avatar,
-                roleId,
+                roleId: +roleId,
             },
         });
         return newUser;

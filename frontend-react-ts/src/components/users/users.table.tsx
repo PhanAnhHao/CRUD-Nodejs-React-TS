@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { Button, Space, Table } from 'antd';
+import { Button, Space, Table, Upload } from 'antd';
 import type { TableProps } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../redux/store';
 import { getAllUsers } from '../../redux/slices/users.slice';
+import { Link } from 'react-router-dom';
 
 export interface IUser {
     id: number;
@@ -47,6 +48,19 @@ const columns: TableProps<IUser>['columns'] = [
         title: 'Avatar',
         dataIndex: 'avatar',
         key: 'avatar',
+        render: (avatar) =>
+            avatar ? (
+                <Upload
+                    listType="picture-card"
+                    fileList={[{
+                        uid: '-1',
+                        name: avatar.split('/').pop(), // lấy tên file cuối cùng
+                        url: avatar, // dùng đúng URL từ backend
+                    }]}
+                    showUploadList={true}
+                    disabled
+                />
+            ) : 'N/A',
     },
     {
         title: 'Role',
@@ -57,7 +71,7 @@ const columns: TableProps<IUser>['columns'] = [
     {
         title: 'Action',
         key: 'action',
-        render: (_, record) => (
+        render: (_) => (
             <Space size="middle">
                 <Button style={{ backgroundColor: 'yellow' }}>Edit</Button>
                 <Button style={{ backgroundColor: 'red', color: '#fff' }}>Delete</Button>
@@ -76,13 +90,29 @@ const UsersTable = () => {
     }, [dispatch]);
 
     return (
-        <Table<IUser>
-            columns={columns}
-            dataSource={data}
-            loading={isFetching}
-            rowKey="id"
-            pagination={false}
-        />
+        <>
+            <div style={{
+                marginBottom: 16,
+                display: "flex",
+                justifyContent: "flex-end"
+            }}>
+                <Button
+                    type="primary"
+                >
+                    <Link
+                        to={"/user/create"}
+                    >
+                        Create new user
+                    </Link>
+                </Button>
+            </div>
+            <Table<IUser>
+                columns={columns}
+                dataSource={data}
+                loading={isFetching}
+                rowKey="id"
+            />
+        </>
     );
 };
 

@@ -11,7 +11,8 @@ import {
 // Create
 export const createUser = async (req: Request, res: Response) => {
     try {
-        const { email, password, fullName, address, phone, avatar, roleId } = req.body;
+        const { email, password, fullName, address, phone, roleId } = req.body;
+        const avatar = req.file ? req.file.filename : null; // lưu tên file
 
         if (!email || !password || !fullName) {
             return res.status(400).json({
@@ -27,13 +28,15 @@ export const createUser = async (req: Request, res: Response) => {
             address,
             phone,
             avatar,
-            roleId
+            +roleId
         );
+
+        const avatarUrl = avatar ? `${req.protocol}://${req.get("host")}${avatar}` : null;
 
         return res.status(201).json({
             status: 201,
             message: "Create user success",
-            data: newUser,
+            data: { ...newUser, avatarUrl },
         });
     } catch (error: any) {
         console.error("postCreateUser error:", error);
@@ -45,15 +48,17 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 // Get all
-// dùng _req thay cho req ở đây vì hàm này ko dùng đến req
-// tránh tình trạng: warning "variable 'req' is declared but its value is never read
-export const getUsersPage = async (_req: Request, res: Response) => {
+export const getUsersPage = async (req: Request, res: Response) => {
     try {
         const users = await handleGetAllUsers();
+        const usersWithUrl = users.map(u => ({
+            ...u,
+            avatar: u.avatar ? `${req.protocol}://${req.get('host')}/images/${u.avatar}` : null
+        }));
         return res.status(200).json({
             status: 200,
             message: "Get all users success",
-            data: users,
+            data: usersWithUrl,
         });
     } catch (error) {
         console.error("getUsersPage error:", error);

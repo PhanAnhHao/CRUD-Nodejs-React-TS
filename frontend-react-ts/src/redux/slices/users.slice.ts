@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getAllUsersApi } from '../../services/api';
+import { getAllUsersApi } from '../../services/apis/user.api';
 import { IUser } from '../../components/users/users.table';
 import { IBackendRes, IPagination } from '../../types/backend';
 

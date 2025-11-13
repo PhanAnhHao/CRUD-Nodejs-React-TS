@@ -2,6 +2,8 @@ import { Breadcrumb } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import { routes } from './app.header';
 
+const capitalizeFirstLetter = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
 const AppBreadcrumb = () => {
     const location = useLocation();
     const pathSnippets = location.pathname.split('/').filter(i => i);
@@ -11,11 +13,14 @@ const AppBreadcrumb = () => {
         const route = routes.find(r => r.path === url);
         return {
             key: url,
-            title: <Link to={url}>{route?.label || pathSnippets[index]}</Link>,
+            title: (
+                <Link to={url}>
+                    {route?.label || capitalizeFirstLetter(pathSnippets[index])}
+                </Link>
+            ),
         };
     });
 
-    // Nếu URL là root '/' thì chỉ hiển thị Home
     if (breadcrumbItems.length === 0) {
         breadcrumbItems.push({ key: '/', title: <Link to="/">Home</Link> });
     } else {

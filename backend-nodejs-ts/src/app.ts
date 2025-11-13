@@ -5,6 +5,7 @@ import webRoute from "./routes/web";
 import getConnection from "./config/database";
 import initDatabase from "config/seed";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -24,6 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // config static files: imgs/css/js
 app.use(express.static('public'));
+
+// Cho phép truy cập thư mục upload
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
 
 // config routes
 webRoute(app);
