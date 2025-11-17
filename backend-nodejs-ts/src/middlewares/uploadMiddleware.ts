@@ -7,6 +7,7 @@ const upload = multer({
     storage,
     limits: { fileSize: 3 * 1024 * 1024 }, // 3MB max
     fileFilter: (req, file, cb) => {
+        // Chỉ chấp nhận PNG, JPG, JPEG
         if (["image/png", "image/jpg", "image/jpeg"].includes(file.mimetype)) {
             cb(null, true);
         } else {
@@ -24,33 +25,19 @@ export const uploadAvatarBase64 = (req: any, res: any, next: any) => {
             try {
                 const mimeType = req.file.mimetype;
 
-                let processedBuffer: Buffer;
-
-                if (mimeType === "image/jpeg" || mimeType === "image/jpg") {
-                    // JPEG: resize + giảm chất lượng
-                    processedBuffer = await sharp(req.file.buffer)
-                        .resize({ width: 500, height: 500, fit: "inside" })
-                        .jpeg({ quality: 60 }) // giảm chất lượng xuống 60%
-                        .toBuffer();
-                } else if (mimeType === "image/png") {
-                    // PNG: resize + nén
-                    processedBuffer = await sharp(req.file.buffer)
-                        .resize({ width: 500, height: 500, fit: "inside" })
-                        .png({ compressionLevel: 9 }) // nén PNG
-                        .toBuffer();
-                } else {
-                    processedBuffer = req.file.buffer;
-                }
+                // Resize + nén
+                const processedBuffer = await sharp(req.file.buffer)
+                    .resize({ width: 500, height: 500, fit: "inside" }) // giữ aspect ratio
+                    .toFormat(mimeType === "image/png" ? "png" : "jpeg", { quality: 60 }) // nén JPEG/PNG
+                    .toBuffer();
 
                 // Chuyển buffer → Base64
-                req.body.avatar = `data:${mimeType};base64,${processedBuffer.toString(
-                    "base64"
-                )}`;
+                req.body.avatar = `data:${mimeType};base64,${processedBuffer.toString("base64")}`;
             } catch (error) {
                 return res.status(500).json({ error: "Failed to process image" });
             }
         }
-
+        // Nếu FE đã gửi sẵn base64 trong req.body.avatar thì giữ nguyên
         next();
     });
 };

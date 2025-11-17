@@ -6,3 +6,11 @@ export const getAllUsersApi = async () => {
     const res = await axios.get<IBackendRes<IUser[]>>('http://localhost:8080/users/all');
     return res.data;
 };
+
+export const postCreateAUserApi = async (data: IUser) => {
+    const res = await axios.post<IBackendRes<IUser>>(
+        'http://localhost:8080/users',
+        data
+    );
+    return res.data;
+};

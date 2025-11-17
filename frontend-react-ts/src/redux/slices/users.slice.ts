@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getAllUsersApi } from '../../services/apis/user.api';
+import { getAllUsersApi, postCreateAUserApi } from '../../services/apis/user.api';
 import { IUser } from '../../components/users/users.table';
 import { IBackendRes, IPagination } from '../../types/backend';
 
@@ -9,7 +9,6 @@ interface IState {
     data: IUser[];
 }
 
-// ✅ Dùng generic type cho thunk
 export const getAllUsers = createAsyncThunk<
     IBackendRes<IUser[]>,
     void
@@ -20,6 +19,18 @@ export const getAllUsers = createAsyncThunk<
         return response;
     }
 );
+
+export const createAUser = createAsyncThunk<
+    IBackendRes<IUser>, // trả về mảng
+    IUser // payload khi dispatch
+>(
+    'user/createAUser',
+    async (data: IUser) => {
+        const response = await postCreateAUserApi(data);
+        return response;
+    }
+);
+
 
 const initialState: IState = {
     isFetching: false,
@@ -38,6 +49,7 @@ export const userSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            // getAllUsers
             .addCase(getAllUsers.pending, (state) => {
                 state.isFetching = true;
             })
@@ -47,14 +59,30 @@ export const userSlice = createSlice({
             .addCase(getAllUsers.fulfilled, (state, action) => {
                 state.isFetching = false;
 
-                if (action.payload.data) {
+                if (action.payload?.data) {
                     state.data = action.payload.data;
                 }
-                if (action.payload.pagination) {
+                if (action.payload?.pagination) {
                     state.pagination = action.payload.pagination;
                 }
+            })
+
+            // createAUser
+            .addCase(createAUser.pending, (state) => {
+                state.isFetching = true;
+            })
+            .addCase(createAUser.rejected, (state) => {
+                state.isFetching = false;
+            })
+            .addCase(createAUser.fulfilled, (state, action) => {
+                state.isFetching = false;
+                if (action.payload?.data) {
+                    state.data.push(action.payload.data); // đúng kiểu IUser
+                }
             });
-    },
+
+
+    }
 });
 
 export default userSlice.reducer;

@@ -12,7 +12,7 @@ import {
 export const createUser = async (req: Request, res: Response) => {
     try {
         const { email, password, fullName, address, phone, roleId } = req.body;
-        const avatarBase64: string | null = req.body.avatar || null;
+        const avatarBase64: string | null = req.body.avatar || null; // lấy avatar Base64 từ file upload hoặc FE gửi sẵn
 
         if (!email || !password || !fullName) {
             return res.status(400).json({

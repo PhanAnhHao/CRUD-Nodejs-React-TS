@@ -24,8 +24,17 @@ const handleCreateUser = async (
     roleId: number
 ) => {
     try {
+
+        // 1. Kiểm tra email tồn tại
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) {
+            throw new Error('Email already exists');
+        }
+
+        // 2. Hash password
         const hashedPassword = await hashPassword(password);
 
+        // 3. Tạo user mới
         const newUser = await prisma.user.create({
             data: {
                 email,
@@ -33,7 +42,7 @@ const handleCreateUser = async (
                 fullName,
                 address,
                 phone,
-                avatar: avatarBase64,
+                avatar: avatarBase64 || null, // lưu Base64 hoặc null
                 roleId,
             },
         });
