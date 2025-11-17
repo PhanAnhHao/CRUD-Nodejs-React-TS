@@ -136,7 +136,6 @@ export const deleteUser = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const result = await handleDeleteUser(id);
-
         if (!result.success) {
             const status = result.message === "User not found" ? 404 : 500;
             return res.status(status).json({
@@ -147,8 +146,7 @@ export const deleteUser = async (req: Request, res: Response) => {
 
         return res.status(200).json({
             status: 200,
-            message: result.message,
-            data: null
+            message: result.message
         });
     } catch (error) {
         console.error("deleteUser error:", error);
@@ -185,7 +183,6 @@ export const updateUser = async (req: Request, res: Response) => {
         return res.status(200).json({
             status: 200,
             message: "Update user success",
-            data: updatedUser,
         });
     } catch (error) {
         console.error("updateUser error:", error);
