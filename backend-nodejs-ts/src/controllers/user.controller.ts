@@ -148,7 +148,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         return res.status(200).json({
             status: 200,
             message: result.message,
-            data: result.data,
+            data: null
         });
     } catch (error) {
         console.error("deleteUser error:", error);

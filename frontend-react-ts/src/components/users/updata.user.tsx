@@ -1,12 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Avatar, Button, Form, Input, message, Radio, Upload } from 'antd';
+import { Button, Form, Input, message, Radio, Upload } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
-import { createAUser, getAllUsers, getUserById, updateAUser } from '../../redux/slices/users.slice';
+import { getAllUsers, getUserById, updateAUser } from '../../redux/slices/users.slice';
 import { getBase64 } from '../../utils/convert.base64';
-import { IUser } from '../../components/users/users.table';
 
 const UpdateUserPage = () => {
     const { id } = useParams(); // Lấy id từ URL
@@ -31,14 +30,14 @@ const UpdateUserPage = () => {
                 fullName: selectedUser.fullName,
                 address: selectedUser.address,
                 phone: selectedUser.phone,
-                roleId: Number(selectedUser.roleId), // ép kiểu number
+                roleId: Number(selectedUser.roleId),
             });
-            if (selectedUser.avatar) {
-                setAvatarBase64(selectedUser.avatar);
-            }
+
+            // Nếu user có avatar → set base64
+            // Nếu KHÔNG có avatar → xóa avatar cũ
+            setAvatarBase64(selectedUser.avatar ?? null);
         }
     }, [selectedUser, form]);
-
 
     // Handle submit form
     const onFinish = async (values: any) => {
@@ -55,6 +54,7 @@ const UpdateUserPage = () => {
         try {
             await dispatch(updateAUser(payload)).unwrap();
             dispatch(getAllUsers());
+            form.resetFields();
             message.success('User updated successfully!');
             navigate('/user');
         } catch (error) {

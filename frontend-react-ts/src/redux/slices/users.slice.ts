@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getAllUsersApi, getUserByIdApi, getUsersWithPaginationApi, postCreateAUserApi, putUpdateAUserApi } from '../../services/apis/user.api';
+import { deleteAUserApi, getAllUsersApi, getUserByIdApi, getUsersWithPaginationApi, postCreateAUserApi, putUpdateAUserApi } from '../../services/apis/user.api';
 import { IUser } from '../../components/users/users.table';
 import { IBackendRes, IPagination } from '../../types/backend';
 
@@ -58,6 +58,14 @@ export const updateAUser = createAsyncThunk<
     'user/updateAUser',
     async ({ id, data }) => {
         const response = await putUpdateAUserApi(id, data);
+        return response;
+    }
+);
+
+export const deleteAUser = createAsyncThunk<IBackendRes<null>, number>(
+    'user/deleteAUser',
+    async (id: number) => {
+        const response = await deleteAUserApi(id);
         return response;
     }
 );
@@ -124,6 +132,27 @@ export const userSlice = createSlice({
                     const index = state.data.findIndex(u => u.id === updatedUser.id);
                     if (index !== -1) state.data[index] = updatedUser;
                     if (state.selectedUser?.id === updatedUser.id) state.selectedUser = updatedUser;
+                }
+            })
+
+            // deleteAUser
+            .addCase(deleteAUser.pending, (state) => {
+                state.isFetching = true;
+            })
+            .addCase(deleteAUser.rejected, (state) => {
+                state.isFetching = false;
+            })
+            .addCase(deleteAUser.fulfilled, (state, action) => {
+                state.isFetching = false;
+
+                const deletedId = action.meta.arg; // id gửi vào thunk
+
+                // Xóa user trong list data
+                state.data = state.data.filter(u => u.id !== deletedId);
+
+                // Nếu user đang xem là user bị xóa → clear selectedUser
+                if (state.selectedUser?.id === deletedId) {
+                    state.selectedUser = null;
                 }
             });
     }

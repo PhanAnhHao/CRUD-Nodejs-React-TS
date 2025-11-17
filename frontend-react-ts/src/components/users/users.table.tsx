@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Button, Space, Table, Upload } from 'antd';
+import { Button, message, Space, Table, Upload } from 'antd';
 import type { TableProps } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../redux/store';
-import { getUsersWithPagination } from '../../redux/slices/users.slice';
+import { deleteAUser, getAllUsers, getUsersWithPagination } from '../../redux/slices/users.slice';
 import { Link } from 'react-router-dom';
 import { base64ToUrl } from '../../utils/convert.base64';
 import DetailUser from './user.detail';
@@ -107,7 +107,12 @@ const UsersTable = () => {
                     <Button style={{ backgroundColor: 'yellow' }}>
                         <Link to={`/user/update/${record.id}`}>Edit</Link>
                     </Button>
-                    <Button style={{ backgroundColor: 'red', color: '#fff' }}>Delete</Button>
+                    <Button
+                        style={{ backgroundColor: 'red', color: '#fff' }}
+                        onClick={() => handleDelete(record.id)}
+                    >
+                        Delete
+                    </Button>
                 </Space>
             ),
         },
@@ -130,6 +135,18 @@ const UsersTable = () => {
         setCurrentPage(page);
         if (pageSize) setPageSize(pageSize);
     };
+
+    const handleDelete = async (id: number) => {
+        try {
+            await dispatch(deleteAUser(id)).unwrap();
+            dispatch(getAllUsers()); // load lại danh sách
+            message.success("User deleted successfully!");
+        } catch (error) {
+            message.error("Failed to delete user!");
+            console.log(error);
+        }
+    };
+
 
     return (
         <>

@@ -32,3 +32,8 @@ export const putUpdateAUserApi = async (id: number, data: Partial<IUser>) => {
     );
     return res.data;
 };
+
+export const deleteAUserApi = async (id: number) => {
+    const res = await axios.delete<IBackendRes<null>>(`http://localhost:8080/users/${id}`);
+    return res.data;
+};
