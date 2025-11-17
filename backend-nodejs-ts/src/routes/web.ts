@@ -9,9 +9,9 @@ import { uploadAvatarBase64 } from "src/middlewares/uploadMiddleware";
 const router = express.Router();
 
 const webRoute = (app: Express) => {
+    router.get("/users/all", getUsersPage);
     router.post("/users", uploadAvatarBase64, createUser);
     router.get("/users", getUsersPageWithPaginate);
-    router.get("/users/all", getUsersPage);
     router.get("/users/:id", getViewUser);
     router.put("/users/:id", updateUser);
     router.delete("/users/:id", deleteUser);

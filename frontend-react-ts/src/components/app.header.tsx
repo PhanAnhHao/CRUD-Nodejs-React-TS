@@ -13,9 +13,10 @@ const { Header } = Layout;
 const AppHeader = () => {
     const location = useLocation();
 
-    const selectedKey =
-        routes.find(r => r.path === location.pathname)?.path ||
-        routes.find(r => location.pathname.startsWith(r.path))?.path;
+    const selectedKey = routes
+        .slice()
+        .sort((a, b) => b.path.length - a.path.length)
+        .find(r => location.pathname.startsWith(r.path))?.path || '/';
 
     const menuItems = routes.map(route => ({
         key: route.path,

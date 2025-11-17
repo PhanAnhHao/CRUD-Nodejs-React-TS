@@ -75,6 +75,9 @@ const handleGetUsersWithPaginate = async (currentPage: number, pageSize: number)
         const users = await prisma.user.findMany({
             skip,
             take: pageSize,
+            include: {
+                role: true,
+            },
         });
 
         return {
@@ -100,16 +103,28 @@ const handleGetUserById = async (id: string) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: +id },
+            select: {
+                id: true,
+                email: true,
+                fullName: true,
+                address: true,
+                phone: true,
+                avatar: true,
+                roleId: true,
+            },
         });
+
         if (!user) {
             return { success: false, message: "User not found", data: null };
         }
+
         return { success: true, message: "Get user success", data: user };
     } catch (error) {
         console.error("getUserById error:", error);
         return { success: false, message: "Internal server error", data: null };
     }
 };
+
 
 // Delete user
 const handleDeleteUser = async (id: string) => {
@@ -134,27 +149,22 @@ const handleUpdateUserById = async (
     fullName: string,
     address: string,
     phone: string,
-    avatar: string,
-    roleId: number
-) => {
+    avatar?: string,
+    roleId?: number) => {
     try {
-        const updatedUser = await prisma.user.update({
+        const updateUser = await prisma.user.update({
             where: { id: +id },
-            data: {
-                email,
-                fullName,
-                address,
-                phone,
-                ...(avatar && { avatar }),
-                roleId,
-            },
+            data: { email, fullName, address, phone, ...(avatar && { avatar }), ...(roleId && { roleId }) },
         });
-        return updatedUser;
+
+        const { password, ...updateUserWithoutPassword } = updateUser;
+        return updateUserWithoutPassword;
     } catch (error) {
         console.error("updateUserById error:", error);
         return null;
     }
 };
+
 
 export {
     hashPassword,

@@ -1,41 +1,68 @@
-import { Button, Form, Input, message, Radio, Upload } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useState } from 'react';
-import { getBase64 } from '../../utils/convert.base64';
+import { Avatar, Button, Form, Input, message, Radio, Upload } from 'antd';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../redux/store';
-import { createAUser, getAllUsers } from '../../redux/slices/users.slice';
-import { Link, useNavigate } from 'react-router-dom';
+import { createAUser, getAllUsers, getUserById, updateAUser } from '../../redux/slices/users.slice';
+import { getBase64 } from '../../utils/convert.base64';
+import { IUser } from '../../components/users/users.table';
 
-const CreateUserPage = () => {
-
+const UpdateUserPage = () => {
+    const { id } = useParams(); // Lấy id từ URL
     const dispatch = useDispatch<AppDispatch>();
-    const { isFetching } = useSelector((state: RootState) => state.user);
-
+    const { selectedUser, isFetching } = useSelector((state: RootState) => state.user);
     const navigate = useNavigate();
-
     const [avatarBase64, setAvatarBase64] = useState<string | null>(null);
+    const [form] = Form.useForm();
 
+    // Lấy dữ liệu user theo id khi load page
+    useEffect(() => {
+        if (id) {
+            dispatch(getUserById(+id));
+        }
+    }, [dispatch, id]);
+
+    // Set dữ liệu vào form khi selectedUser thay đổi
+    useEffect(() => {
+        if (selectedUser) {
+            form.setFieldsValue({
+                email: selectedUser.email,
+                fullName: selectedUser.fullName,
+                address: selectedUser.address,
+                phone: selectedUser.phone,
+                roleId: Number(selectedUser.roleId), // ép kiểu number
+            });
+            if (selectedUser.avatar) {
+                setAvatarBase64(selectedUser.avatar);
+            }
+        }
+    }, [selectedUser, form]);
+
+
+    // Handle submit form
     const onFinish = async (values: any) => {
-        const payload = { ...values, avatar: avatarBase64 }; // gộp avatar vào form data
-        console.log('Submit payload:', payload);
+        if (!selectedUser?.id) return;
+
+        const payload = {
+            id: selectedUser.id,
+            data: {
+                ...values,
+                avatar: avatarBase64,
+            },
+        };
 
         try {
-            const res = await dispatch(createAUser(payload)).unwrap();
-            console.log('User created:', res);
-            // Sau khi tạo xong, có thể reload danh sách
+            await dispatch(updateAUser(payload)).unwrap();
             dispatch(getAllUsers());
-            message.success('User created successfully!');
+            message.success('User updated successfully!');
             navigate('/user');
         } catch (error) {
-            console.log('Failed to create user:', error);
-            message.error('Failed to create user!');
+            console.log(error);
+            message.error('Failed to update user!');
         }
     };
 
-    const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
-    };
 
     const handleBeforeUpload = async (file: File) => {
         if (!['image/png', 'image/jpeg', 'image/jpg'].includes(file.type)) {
@@ -46,41 +73,29 @@ const CreateUserPage = () => {
             message.error('Image must smaller than 3MB!');
             return Upload.LIST_IGNORE;
         }
-
         const base64 = await getBase64(file);
         setAvatarBase64(base64);
-        return false; // false để ngăn upload tự động
+        return false; // ngăn upload tự động
     };
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}
-        >
-            <div style={{
-                width: "50%"
-            }}>
-                <h1
-                    style={{
-                        marginBottom: 16,
-                        color: "#1677ff"
-                    }}
-                >Create a new user</h1>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ width: "50%" }}>
+                <h1 style={{ marginBottom: 16, color: "#1677ff" }}>Update a user</h1>
                 <Form
-                    name="basic"
+                    form={form}
+                    name="updateUser"
                     onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
+                    onFinishFailed={(err) => console.log(err)}
                     autoComplete="off"
+                    layout="vertical"
                 >
                     <Form.Item
                         label="Email"
                         name="email"
                         rules={[
                             { required: true, message: 'Please input your email!' },
-                            { type: 'email', message: 'invalid email!' }
+                            { type: 'email', message: 'Invalid email!' }
                         ]}
                     >
                         <Input />
@@ -89,9 +104,8 @@ const CreateUserPage = () => {
                     <Form.Item
                         label="Password"
                         name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
                     >
-                        <Input.Password />
+                        <Input.Password disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -105,7 +119,7 @@ const CreateUserPage = () => {
                     <Form.Item
                         label="Address"
                         name="address"
-                        rules={[{ required: true, message: 'Please input your full address!' }]}
+                        rules={[{ required: true, message: 'Please input your address!' }]}
                     >
                         <Input />
                     </Form.Item>
@@ -113,7 +127,7 @@ const CreateUserPage = () => {
                     <Form.Item
                         label="Phone"
                         name="phone"
-                        rules={[{ required: true, message: 'Please input your full phone!' }]}
+                        rules={[{ required: true, message: 'Please input your phone!' }]}
                     >
                         <Input />
                     </Form.Item>
@@ -122,8 +136,18 @@ const CreateUserPage = () => {
                         <Upload
                             listType="picture-card"
                             beforeUpload={handleBeforeUpload}
-                            fileList={avatarBase64 ? [{ uid: '-1', name: 'avatar.jpg', url: avatarBase64 }] : []} // <-- use fileList
-                            showUploadList={{ showPreviewIcon: true }} // optional
+                            fileList={
+                                avatarBase64
+                                    ? [
+                                        {
+                                            uid: '-1',
+                                            name: 'avatar.jpg',
+                                            url: avatarBase64, // base64 URL
+                                        },
+                                    ]
+                                    : []
+                            }
+                            showUploadList={{ showPreviewIcon: true }}
                         >
                             {avatarBase64 ? null : (
                                 <div>
@@ -146,7 +170,9 @@ const CreateUserPage = () => {
                     </Form.Item>
 
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button style={{ margin: "0 20px" }}><Link to={'/user'}>Back</Link></Button>
+                        <Button style={{ marginRight: 16 }}>
+                            <Link to="/user">Back</Link>
+                        </Button>
                         <Button type="primary" htmlType="submit" loading={isFetching}>
                             Submit
                         </Button>
@@ -157,4 +183,4 @@ const CreateUserPage = () => {
     );
 };
 
-export default CreateUserPage;
+export default UpdateUserPage;
