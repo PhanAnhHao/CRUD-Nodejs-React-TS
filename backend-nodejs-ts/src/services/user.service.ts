@@ -20,11 +20,12 @@ const handleCreateUser = async (
     fullName: string,
     address: string,
     phone: string,
-    avatar: string,
+    avatarBase64: string | null,
     roleId: number
 ) => {
     try {
         const hashedPassword = await hashPassword(password);
+
         const newUser = await prisma.user.create({
             data: {
                 email,
@@ -32,14 +33,15 @@ const handleCreateUser = async (
                 fullName,
                 address,
                 phone,
-                avatar,
-                roleId: +roleId,
+                avatar: avatarBase64,
+                roleId,
             },
         });
+
         return newUser;
-    } catch (error) {
+    } catch (error: any) {
         console.error("handleCreateUser error:", error);
-        throw error;
+        throw new Error(error?.message || "Failed to create user");
     }
 };
 

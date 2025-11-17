@@ -12,7 +12,7 @@ import {
 export const createUser = async (req: Request, res: Response) => {
     try {
         const { email, password, fullName, address, phone, roleId } = req.body;
-        const avatar = req.file ? req.file.filename : null; // lưu tên file
+        const avatarBase64: string | null = req.body.avatar || null;
 
         if (!email || !password || !fullName) {
             return res.status(400).json({
@@ -27,19 +27,17 @@ export const createUser = async (req: Request, res: Response) => {
             fullName,
             address,
             phone,
-            avatar,
+            avatarBase64,
             +roleId
         );
-
-        const avatarUrl = avatar ? `${req.protocol}://${req.get("host")}${avatar}` : null;
 
         return res.status(201).json({
             status: 201,
             message: "Create user success",
-            data: { ...newUser, avatarUrl },
+            data: newUser,
         });
     } catch (error: any) {
-        console.error("postCreateUser error:", error);
+        console.error("createUser error:", error);
         return res.status(500).json({
             status: 500,
             message: error?.message || "Internal server error",

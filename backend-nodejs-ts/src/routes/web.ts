@@ -3,12 +3,13 @@ import {
     createUser, getUsersPageWithPaginate, getUsersPage,
     updateUser, getViewUser, deleteUser
 } from "controllers/user.controller";
-import fileUploadMiddleware from "src/middlewares/multer";
+import { uploadAvatarBase64 } from "src/middlewares/uploadMiddleware";
+
 
 const router = express.Router();
 
 const webRoute = (app: Express) => {
-    router.post("/users", fileUploadMiddleware("avatar"), createUser);
+    router.post("/users", uploadAvatarBase64, createUser);
     router.get("/users", getUsersPageWithPaginate);
     router.get("/users/all", getUsersPage);
     router.get("/users/:id", getViewUser);

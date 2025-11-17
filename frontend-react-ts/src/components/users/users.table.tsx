@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../redux/store';
 import { getAllUsers } from '../../redux/slices/users.slice';
 import { Link } from 'react-router-dom';
+import { base64ToUrl } from '../../utils/convert.base64';
 
 export interface IUser {
     id: number;
@@ -54,8 +55,8 @@ const columns: TableProps<IUser>['columns'] = [
                     listType="picture-card"
                     fileList={[{
                         uid: '-1',
-                        name: avatar.split('/').pop(), // lấy tên file cuối cùng
-                        url: avatar, // dùng đúng URL từ backend
+                        name: 'avatar.jpg',
+                        url: base64ToUrl(avatar),
                     }]}
                     showUploadList={true}
                     disabled
