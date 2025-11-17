@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Space, Table, Upload } from 'antd';
 import type { TableProps } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../redux/store';
-import { getAllUsers } from '../../redux/slices/users.slice';
+import { getUsersWithPagination } from '../../redux/slices/users.slice';
 import { Link } from 'react-router-dom';
 import { base64ToUrl } from '../../utils/convert.base64';
 
@@ -53,21 +53,25 @@ const columns: TableProps<IUser>['columns'] = [
             avatar ? (
                 <Upload
                     listType="picture-card"
-                    fileList={[{
-                        uid: '-1',
-                        name: 'avatar.jpg',
-                        url: base64ToUrl(avatar),
-                    }]}
+                    fileList={[
+                        {
+                            uid: '-1',
+                            name: 'avatar.jpg',
+                            url: base64ToUrl(avatar),
+                        },
+                    ]}
                     showUploadList={true}
                     disabled
                 />
-            ) : 'N/A',
+            ) : (
+                'N/A'
+            ),
     },
     {
         title: 'Role',
         dataIndex: 'role',
         key: 'role',
-        render: (role) => role ? role.name : 'N/A'
+        render: (role) => (role ? role.name : 'N/A'),
     },
     {
         title: 'Action',
@@ -83,28 +87,32 @@ const columns: TableProps<IUser>['columns'] = [
 
 const UsersTable = () => {
     const dispatch = useDispatch<AppDispatch>();
+    const { data, isFetching, pagination } = useSelector((state: RootState) => state.user);
 
-    const { data, isFetching } = useSelector((state: RootState) => state.user);
+    // Cập nhật bảng khi component mount hoặc pagination thay đổi
+    const [currentPage, setCurrentPage] = useState<number>(pagination.currentPage);
+    const [pageSize, setPageSize] = useState<number>(pagination.pageSize);
 
     useEffect(() => {
-        dispatch(getAllUsers());
-    }, [dispatch]);
+        dispatch(getUsersWithPagination({ current: currentPage, pageSize }));
+    }, [dispatch, currentPage, pageSize]);
+
+    const handleOnChange = (page: number, pageSize?: number) => {
+        setCurrentPage(page);
+        if (pageSize) setPageSize(pageSize);
+    };
 
     return (
         <>
-            <div style={{
-                marginBottom: 16,
-                display: "flex",
-                justifyContent: "flex-end"
-            }}>
-                <Button
-                    type="primary"
-                >
-                    <Link
-                        to={"/user/create"}
-                    >
-                        Create new user
-                    </Link>
+            <div
+                style={{
+                    marginBottom: 16,
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                }}
+            >
+                <Button type="primary">
+                    <Link to="/user/create">Create new user</Link>
                 </Button>
             </div>
             <Table<IUser>
@@ -112,6 +120,14 @@ const UsersTable = () => {
                 dataSource={data}
                 loading={isFetching}
                 rowKey="id"
+                pagination={{
+                    current: currentPage,
+                    pageSize: pageSize,
+                    total: pagination.totalItems,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    onChange: handleOnChange,
+                    showSizeChanger: true,
+                }}
             />
         </>
     );
