@@ -1,7 +1,8 @@
 // const express = require("express");
 import express from "express";
 import 'dotenv/config';
-import webRoute from "./routes/web";
+import userRoute from "./routes/user.route";
+import productRoute from "./routes/product.route";
 import getConnection from "./config/database";
 import initDatabase from "config/seed";
 import cors from "cors";
@@ -30,7 +31,8 @@ app.use(express.static('public'));
 app.use('/images', express.static(path.join(__dirname, '../public/images')));
 
 // config routes
-webRoute(app);
+userRoute(app);
+productRoute(app);
 
 getConnection();
 

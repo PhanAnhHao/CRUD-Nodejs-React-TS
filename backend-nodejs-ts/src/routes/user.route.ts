@@ -13,7 +13,7 @@ const webRoute = (app: Express) => {
     router.post("/users", uploadAvatarBase64, createUser);
     router.get("/users", getUsersPageWithPaginate);
     router.get("/users/:id", getViewUser);
-    router.put("/users/:id", updateUser);
+    router.put("/users/:id", uploadAvatarBase64, updateUser);
     router.delete("/users/:id", deleteUser);
 
     app.use("/", router);
