@@ -3,6 +3,9 @@ import { IUser } from "./users.table";
 import { base64ToUrl } from "../../utils/convert.base64";
 import dayjs from "dayjs";
 import { FORMATE_DATE_VN } from "../../utils/dayjs";
+import { useSelector } from "react-redux";
+import DetailUserLoader from "./loader/user.detail.loader";
+import { RootState } from "../../redux/store";
 
 interface IProps {
     openViewDetail: boolean;
@@ -12,10 +15,20 @@ interface IProps {
 }
 const DetailUser = (props: IProps) => {
     const { openViewDetail, setOpenViewDetail, dataViewDetail, setDataViewDetail } = props;
+    const { isFetching } = useSelector((state: RootState) => state.user);
 
     const onClose = () => {
         setOpenViewDetail(false);
         setDataViewDetail(null);
+    }
+
+    if (isFetching) {
+        return (
+            <DetailUserLoader
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+            />
+        );
     }
 
     return (

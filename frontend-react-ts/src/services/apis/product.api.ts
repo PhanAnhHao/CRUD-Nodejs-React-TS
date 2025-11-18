@@ -17,7 +17,13 @@ export const postCreateAProductApi = async (data: IProductPayload) => {
 };
 
 export const getProductsWithPaginationApi = async (current: number, pageSize: number) => {
-    const res = await axios.get<IBackendRes<IProduct[]>>(`http://localhost:8080/products?current=${current}&pageSize=${pageSize}`);
+    const res = await axios.get<IBackendRes<IProduct[]>>(`http://localhost:8080/products?current=${current}&pageSize=${pageSize}`,
+        {
+            headers: {
+                delay: 3000
+            }
+        }
+    );
     return res.data;
 };
 

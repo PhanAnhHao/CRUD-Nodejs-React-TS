@@ -1,6 +1,9 @@
 import { Badge, Descriptions, Drawer, Image } from "antd";
 import { IProduct } from "./products.table";
 import dayjs from 'dayjs';
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import DetailProductLoader from "./loader/product.detail.loader";
 
 interface IProps {
     openViewDetail: boolean;
@@ -11,10 +14,20 @@ interface IProps {
 
 const DetailProduct = (props: IProps) => {
     const { openViewDetail, setOpenViewDetail, dataViewDetail, setDataViewDetail } = props;
+    const { isFetching } = useSelector((state: RootState) => state.product);
 
     const onClose = () => {
         setOpenViewDetail(false);
         setDataViewDetail(null);
+    }
+
+    if (isFetching) {
+        return (
+            <DetailProductLoader
+                openViewDetail={openViewDetail}
+                setOpenViewDetail={setOpenViewDetail}
+            />
+        );
     }
 
     return (

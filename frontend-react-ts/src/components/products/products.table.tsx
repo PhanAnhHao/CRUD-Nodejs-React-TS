@@ -6,6 +6,7 @@ import type { RootState, AppDispatch } from '../../redux/store';
 import { deleteAProduct, getAllProducts, getProductsWithPagination } from '../../redux/slices/products.slice';
 import { Link } from 'react-router-dom';
 import DetailProduct from './product.detail';
+import ProductsTableLoader from './loader/products.table.loader';
 
 export interface IProductImage {
     id: number;
@@ -148,6 +149,10 @@ const ProductsTable = () => {
         }
     };
 
+    if (isFetching) {
+        return <ProductsTableLoader />;
+    }
+
     return (
         <>
             <div
@@ -164,7 +169,6 @@ const ProductsTable = () => {
             <Table<IProduct>
                 columns={columns}
                 dataSource={data}
-                loading={isFetching}
                 rowKey="id"
                 pagination={{
                     current: currentPage,

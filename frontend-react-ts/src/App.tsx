@@ -6,7 +6,7 @@ import CreateUserPage from './components/users/create.user';
 import ProductsPage from './screens/products';
 import OrdersPage from './screens/orders';
 import './App.css'
-import UpdateUserPage from './components/users/updata.user';
+import UpdateUserPage from './components/users/update.user';
 import CreateProductPage from './components/products/create.product';
 import UpdateProductPage from './components/products/update.product';
 

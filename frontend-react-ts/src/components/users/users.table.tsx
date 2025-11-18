@@ -7,6 +7,7 @@ import { deleteAUser, getAllUsers, getUsersWithPagination } from '../../redux/sl
 import { Link } from 'react-router-dom';
 import { base64ToUrl } from '../../utils/convert.base64';
 import DetailUser from './user.detail';
+import UsersTableLoader from './loader/users.table.loader';
 
 export interface IUser {
     id: number;
@@ -149,6 +150,9 @@ const UsersTable = () => {
         }
     };
 
+    if (isFetching) {
+        return <UsersTableLoader />;
+    }
 
     return (
         <>
@@ -166,7 +170,6 @@ const UsersTable = () => {
             <Table<IUser>
                 columns={columns}
                 dataSource={data}
-                loading={isFetching}
                 rowKey="id"
                 pagination={{
                     current: currentPage,

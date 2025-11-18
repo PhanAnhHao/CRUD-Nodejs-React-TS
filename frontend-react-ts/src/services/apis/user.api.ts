@@ -16,7 +16,13 @@ export const postCreateAUserApi = async (data: IUser) => {
 };
 
 export const getUsersWithPaginationApi = async (current: number, pageSize: number) => {
-    const res = await axios.get<IBackendRes<IUser[]>>(`http://localhost:8080/users?current=${current}&pageSize=${pageSize}`);
+    const res = await axios.get<IBackendRes<IUser[]>>(`http://localhost:8080/users?current=${current}&pageSize=${pageSize}`,
+        {
+            headers: {
+                delay: 3000
+            }
+        }
+    );
     return res.data;
 };
 
