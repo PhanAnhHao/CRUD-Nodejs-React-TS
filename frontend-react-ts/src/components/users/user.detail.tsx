@@ -1,6 +1,8 @@
 import { Avatar, Badge, Descriptions, Drawer } from "antd";
 import { IUser } from "./users.table";
 import { base64ToUrl } from "../../utils/convert.base64";
+import dayjs from "dayjs";
+import { FORMATE_DATE_VN } from "../../utils/dayjs";
 
 interface IProps {
     openViewDetail: boolean;
@@ -50,12 +52,12 @@ const DetailUser = (props: IProps) => {
                                 : null}
                         </Avatar>
                     </Descriptions.Item>
-                    {/* <Descriptions.Item label="Created At">
+                    <Descriptions.Item label="Created At">
                         {dayjs(dataViewDetail?.createdAt).format(FORMATE_DATE_VN)}
                     </Descriptions.Item>
                     <Descriptions.Item label="Updated At">
                         {dayjs(dataViewDetail?.updatedAt).format(FORMATE_DATE_VN)}
-                    </Descriptions.Item> */}
+                    </Descriptions.Item>
                 </Descriptions>
             </Drawer>
         </>

@@ -18,11 +18,10 @@ const CreateUserPage = () => {
 
     const onFinish = async (values: any) => {
         const payload = { ...values, avatar: avatarBase64 }; // gộp avatar vào form data
-        console.log('Submit payload:', payload);
+        // console.log('Submit payload:', payload);
 
         try {
-            const res = await dispatch(createAUser(payload)).unwrap();
-            console.log('User created:', res);
+            await dispatch(createAUser(payload)).unwrap();
             // Sau khi tạo xong, có thể reload danh sách
             dispatch(getAllUsers());
             message.success('User created successfully!');

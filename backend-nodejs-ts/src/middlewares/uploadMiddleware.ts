@@ -21,7 +21,7 @@ const uploadAvatar = multer({
 // Upload nhiều images (cho Product) - tối đa 5 ảnh
 const uploadImages = multer({
     storage,
-    limits: { fileSize: 3 * 1024 * 1024 }, // 3MB max per file
+    limits: { fileSize: 10 * 1024 * 1024 }, // 3MB max per file
     fileFilter: (req, file, cb) => {
         // Chỉ chấp nhận PNG, JPG, JPEG
         if (["image/png", "image/jpg", "image/jpeg"].includes(file.mimetype)) {

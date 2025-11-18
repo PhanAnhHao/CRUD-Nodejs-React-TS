@@ -1,35 +1,38 @@
 import { useEffect, useState } from 'react';
-import { Button, message, Space, Table, Upload } from 'antd';
+import { Button, message, Space, Table, Image } from 'antd';
 import type { TableProps } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../redux/store';
-import { deleteAUser, getAllUsers, getUsersWithPagination } from '../../redux/slices/users.slice';
+import { deleteAProduct, getAllProducts, getProductsWithPagination } from '../../redux/slices/products.slice';
 import { Link } from 'react-router-dom';
-import { base64ToUrl } from '../../utils/convert.base64';
-import DetailUser from './user.detail';
+import DetailProduct from './product.detail';
 
-export interface IUser {
+export interface IProductImage {
     id: number;
-    email: string;
-    fullName: string;
-    address: string;
-    phone: string;
-    avatar: string;
-    role: IRole | null;
-    roleId: number;
+    imageUrl: string;
+    isPrimary: boolean;
+    productId: number;
     createdAt: string;
     updatedAt: string;
 }
 
-export interface IRole {
+export interface IProduct {
     id: number;
     name: string;
+    price: number;
     description: string;
+    quantity: number;
+    sold: number;
+    factory: string;
+    category: string;
+    createdAt: string;
+    updatedAt: string;
+    images: IProductImage[];
 }
 
-const UsersTable = () => {
+const ProductsTable = () => {
 
-    const columns: TableProps<IUser>['columns'] = [
+    const columns: TableProps<IProduct>['columns'] = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -37,9 +40,9 @@ const UsersTable = () => {
             render: (text) => <h4>{text}</h4>,
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
             render(value, record) {
                 return (
                     <a
@@ -53,53 +56,49 @@ const UsersTable = () => {
             },
         },
         {
-            title: 'Full Name',
-            dataIndex: 'fullName',
-            key: 'fullName',
+            title: 'Price',
+            dataIndex: 'price',
+            key: 'price',
+            render: (price) => `${price.toLocaleString('vi-VN')} ₫`,
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
+            title: 'Quantity',
+            dataIndex: 'quantity',
+            key: 'quantity',
         },
         {
-            title: 'Phone',
-            dataIndex: 'phone',
-            key: 'phone',
+            title: 'Sold',
+            dataIndex: 'sold',
+            key: 'sold',
         },
         {
-            title: 'Avatar',
-            dataIndex: 'avatar',
-            key: 'avatar',
-            render: (avatar) =>
-                avatar ? (
-                    <Upload
-                        listType="picture-card"
-                        fileList={[
-                            {
-                                uid: '-1',
-                                name: 'avatar.jpg',
-                                url: base64ToUrl(avatar),
-                            },
-                        ]}
-                        showUploadList={true}
-                        disabled
+            title: 'Factory',
+            dataIndex: 'factory',
+            key: 'factory',
+        },
+        {
+            title: 'Category',
+            dataIndex: 'category',
+            key: 'category',
+        },
+        {
+            title: 'Images',
+            dataIndex: 'images',
+            key: 'images',
+            render: (images: IProductImage[]) => {
+                const primaryImage = images?.find(img => img.isPrimary) || images?.[0];
+                return primaryImage ? (
+                    <Image
+                        width={80}
+                        height={80}
+                        src={primaryImage.imageUrl}
+                        alt="Product"
+                        style={{ objectFit: 'cover' }}
                     />
                 ) : (
                     'N/A'
-                ),
-        },
-        {
-            title: 'Role',
-            dataIndex: 'role',
-            key: 'role',
-            render: (role) => {
-                if (!role) return 'N/A';
-                // nếu role là object
-                if (typeof role === 'object') return role.name || JSON.stringify(role);
-                // nếu role là string
-                return role;
-            }
+                );
+            },
         },
         {
             title: 'Action',
@@ -107,7 +106,7 @@ const UsersTable = () => {
             render: (record) => (
                 <Space size="middle">
                     <Button style={{ backgroundColor: 'yellow' }}>
-                        <Link to={`/user/update/${record.id}`}>Edit</Link>
+                        <Link to={`/product/update/${record.id}`}>Edit</Link>
                     </Button>
                     <Button
                         style={{ backgroundColor: 'red', color: '#fff' }}
@@ -121,16 +120,16 @@ const UsersTable = () => {
     ];
 
     const dispatch = useDispatch<AppDispatch>();
-    const { data, isFetching, pagination } = useSelector((state: RootState) => state.user);
+    const { data, isFetching, pagination } = useSelector((state: RootState) => state.product);
 
     const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
-    const [dataViewDetail, setDataViewDetail] = useState<IUser | null>(null);
+    const [dataViewDetail, setDataViewDetail] = useState<IProduct | null>(null);
 
     const [currentPage, setCurrentPage] = useState<number>(pagination.currentPage);
     const [pageSize, setPageSize] = useState<number>(pagination.pageSize);
 
     useEffect(() => {
-        dispatch(getUsersWithPagination({ current: currentPage, pageSize }));
+        dispatch(getProductsWithPagination({ current: currentPage, pageSize }));
     }, [dispatch, currentPage, pageSize]);
 
     const handleOnChange = (page: number, pageSize?: number) => {
@@ -140,15 +139,14 @@ const UsersTable = () => {
 
     const handleDelete = async (id: number) => {
         try {
-            await dispatch(deleteAUser(id)).unwrap();
-            dispatch(getAllUsers()); // load lại danh sách
-            message.success("User deleted successfully!");
+            await dispatch(deleteAProduct(id)).unwrap();
+            dispatch(getAllProducts());
+            message.success("Product deleted successfully!");
         } catch (error) {
-            message.error("Failed to delete user!");
+            message.error("Failed to delete product!");
             console.log(error);
         }
     };
-
 
     return (
         <>
@@ -160,10 +158,10 @@ const UsersTable = () => {
                 }}
             >
                 <Button type="primary">
-                    <Link to="/user/create">Create new user</Link>
+                    <Link to="/product/create">Create new product</Link>
                 </Button>
             </div>
-            <Table<IUser>
+            <Table<IProduct>
                 columns={columns}
                 dataSource={data}
                 loading={isFetching}
@@ -178,7 +176,7 @@ const UsersTable = () => {
                 }}
             />
 
-            <DetailUser
+            <DetailProduct
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
@@ -188,4 +186,4 @@ const UsersTable = () => {
     );
 };
 
-export default UsersTable;
+export default ProductsTable;
