@@ -53,14 +53,27 @@ model Product {
   sold        Int?     @default(0)
   factory     String   @db.VarChar(255)
   category    String   @db.VarChar(255)
-  image       String?  @db.MediumText
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  images      ProductImage[]
   cartDetails CartDetail[]
   OrderDetail OrderDetail[]
 
   @@map("products")
+}
+
+model ProductImage {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String   @db.MediumText
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+
+  @@map("product_images")
 }
 
 model Cart {

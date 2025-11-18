@@ -7,16 +7,16 @@ import {
     getViewProduct,
     deleteProduct
 } from "controllers/product.controller";
-import { uploadImageBase64 } from "src/middlewares/uploadMiddleware";
+import { uploadImagesBase64 } from "src/middlewares/uploadMiddleware";
 
 const router = express.Router();
 
 const webRoute = (app: Express) => {
     router.get("/products/all", getProductsPage);
-    router.post("/products", uploadImageBase64, createProduct);
+    router.post("/products", uploadImagesBase64, createProduct);
     router.get("/products", getProductsPageWithPaginate);
     router.get("/products/:id", getViewProduct);
-    router.put("/products/:id", uploadImageBase64, updateProduct);
+    router.put("/products/:id", uploadImagesBase64, updateProduct);
     router.delete("/products/:id", deleteProduct);
 
     app.use("/", router);

@@ -12,13 +12,28 @@ import {
 export const createProduct = async (req: Request, res: Response) => {
     try {
         const { name, description, price, quantity, factory, category, sold } = req.body;
-        const imageBase64: string | null = req.body.image || null;
-        console.log("Received image data:", imageBase64);
+
+        // Nhận mảng images từ req.body.images (có thể từ middleware hoặc frontend)
+        let images: string[] = [];
+        if (req.body.images) {
+            // Nếu frontend gửi mảng Base64
+            images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+        } else if (req.body.image) {
+            // Nếu chỉ có 1 image (backward compatible)
+            images = [req.body.image];
+        }
 
         if (!name || !description || price === undefined || quantity === undefined || !factory || !category) {
             return res.status(400).json({
                 status: 400,
                 message: "Missing required fields: name, description, price, quantity, factory, category",
+            });
+        }
+
+        if (images.length === 0) {
+            return res.status(400).json({
+                status: 400,
+                message: "At least one image is required",
             });
         }
 
@@ -29,7 +44,7 @@ export const createProduct = async (req: Request, res: Response) => {
             +quantity,
             factory,
             category,
-            imageBase64,
+            images,
             sold !== undefined ? +sold : undefined
         );
 
@@ -159,7 +174,15 @@ export const deleteProduct = async (req: Request, res: Response) => {
 export const updateProduct = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, description, price, quantity, factory, category, image, sold } = req.body;
+        const { name, description, price, quantity, factory, category, sold } = req.body;
+
+        // Nhận mảng images mới (optional)
+        let images: string[] | undefined;
+        if (req.body.images) {
+            images = Array.isArray(req.body.images) ? req.body.images : [req.body.images];
+        } else if (req.body.image) {
+            images = [req.body.image];
+        }
 
         const updatedProduct = await handleUpdateProductById(
             id,
@@ -169,7 +192,7 @@ export const updateProduct = async (req: Request, res: Response) => {
             +quantity,
             factory,
             category,
-            image,
+            images,
             sold !== undefined ? +sold : undefined
         );
 

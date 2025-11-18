@@ -8,12 +8,11 @@ const handleCreateProduct = async (
     quantity: number,
     factory: string,
     category: string,
-    image: string | null,
+    images: string[], // Mảng các Base64 images
     sold?: number
 ) => {
     try {
-
-        // Tạo product mới
+        // Tạo product mới với images
         const newProduct = await prisma.product.create({
             data: {
                 name,
@@ -22,9 +21,17 @@ const handleCreateProduct = async (
                 quantity,
                 factory,
                 category,
-                image: image || null,
                 ...(sold !== undefined && { sold }),
+                images: {
+                    create: images.map((imageUrl, index) => ({
+                        imageUrl,
+                        isPrimary: index === 0, // Ảnh đầu tiên là ảnh chính
+                    }))
+                }
             },
+            include: {
+                images: true, // Trả về cả images
+            }
         });
 
         return newProduct;
@@ -37,6 +44,13 @@ const handleCreateProduct = async (
 // Get all products
 const handleGetAllProducts = async () => {
     const products = await prisma.product.findMany({
+        include: {
+            images: {
+                orderBy: {
+                    isPrimary: 'desc' // Ảnh chính lên đầu
+                }
+            }
+        },
         orderBy: {
             createdAt: 'desc'
         }
@@ -54,6 +68,13 @@ const handleGetProductsWithPaginate = async (currentPage: number, pageSize: numb
         const products = await prisma.product.findMany({
             skip,
             take: pageSize,
+            include: {
+                images: {
+                    orderBy: {
+                        isPrimary: 'desc'
+                    }
+                }
+            },
             orderBy: {
                 createdAt: 'desc'
             }
@@ -81,7 +102,14 @@ const handleGetProductsWithPaginate = async (currentPage: number, pageSize: numb
 const handleGetProductById = async (id: string) => {
     try {
         const product = await prisma.product.findUnique({
-            where: { id: +id }
+            where: { id: +id },
+            include: {
+                images: {
+                    orderBy: {
+                        isPrimary: 'desc'
+                    }
+                }
+            }
         });
 
         if (!product) {
@@ -98,6 +126,7 @@ const handleGetProductById = async (id: string) => {
 // Delete product
 const handleDeleteProduct = async (id: string) => {
     try {
+        // Cascade delete sẽ tự động xóa images
         const result = await prisma.product.delete({
             where: { id: +id },
         });
@@ -120,22 +149,38 @@ const handleUpdateProductById = async (
     quantity: number,
     factory: string,
     category: string,
-    image?: string,
+    images?: string[], // Mảng images mới
     sold?: number
 ) => {
     try {
+        // Nếu có images mới, xóa images cũ và thêm mới
+        const updateData: any = {
+            name,
+            description,
+            price,
+            quantity,
+            factory,
+            category,
+            ...(sold !== undefined && { sold })
+        };
+
+        if (images && images.length > 0) {
+            // Xóa images cũ và tạo mới
+            updateData.images = {
+                deleteMany: {}, // Xóa tất cả images cũ
+                create: images.map((imageUrl, index) => ({
+                    imageUrl,
+                    isPrimary: index === 0,
+                }))
+            };
+        }
+
         const updateProduct = await prisma.product.update({
             where: { id: +id },
-            data: {
-                name,
-                description,
-                price,
-                quantity,
-                factory,
-                category,
-                ...(image && { image }),
-                ...(sold !== undefined && { sold })
-            },
+            data: updateData,
+            include: {
+                images: true
+            }
         });
 
         return updateProduct;
