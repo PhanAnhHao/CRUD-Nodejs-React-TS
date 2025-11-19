@@ -26,16 +26,16 @@ const UsersTableLoader = () => {
             render: () => <Skeleton.Input active size="small" style={{ width: 150 }} />,
         },
         {
-            title: 'Role',
-            dataIndex: 'role',
-            key: 'role',
-            render: () => <Skeleton.Input active size="small" style={{ width: 80 }} />,
-        },
-        {
             title: 'Avatar',
             dataIndex: 'avatar',
             key: 'avatar',
             render: () => <Skeleton.Avatar active size={50} shape="circle" />,
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role',
+            key: 'role',
+            render: () => <Skeleton.Input active size="small" style={{ width: 80 }} />,
         },
         {
             title: 'Action',

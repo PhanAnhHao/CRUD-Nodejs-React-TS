@@ -7,150 +7,435 @@
 	},
 	"item": [
 		{
-			"name": "create a user",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"abc3@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"fullName\": \"abc2\",\r\n    \"address\": \"...\",\r\n    \"phone\": \"012333444\",\r\n    \"avatar\": \"\",\r\n    \"roleId\": 2\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/users",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get all users",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/users/all",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users",
-						"all"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get all users with pagination",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/users?current=2&pageSize=3",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users"
-					],
-					"query": [
-						{
-							"key": "current",
-							"value": "2"
+			"name": "admin-user",
+			"item": [
+				{
+					"name": "create a user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "user@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "fullName",
+									"value": "User",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "User Address",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "012233345",
+									"type": "text"
+								},
+								{
+									"key": "roleId",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "d:\\TheGioiCuaHao\\M\\doraemon\\540789162_1320988456056896_2366943360766057480_n.jpg"
+								}
+							],
+							"options": {
+								"formdata": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "pageSize",
-							"value": "3"
+						"url": {
+							"raw": "http://localhost:8080/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get a user by id",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/users/4",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users",
-						"4"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "delete a user",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/users/8",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users",
-						"8"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update a user",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"abcupdate@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"fullName\": \"abcupdate\",\r\n    \"address\": \"...\",\r\n    \"phone\": \"012233345\",\r\n    \"avatar\": \"\",\r\n    \"roleId\": 2\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/users/9",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"users",
-						"9"
-					]
+				{
+					"name": "get all users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all users with pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users?current=2&pageSize=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "current",
+									"value": "2"
+								},
+								{
+									"key": "pageSize",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a user by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/44",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"44"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"heheheupdate@gmail.com\",\r\n    \"password\": \"123456\",\r\n    \"fullName\": \"heheheupdate\",\r\n    \"address\": \"... update 1\",\r\n    \"phone\": \"012233345\",\r\n    \"avatar\": \"\",\r\n    \"roleId\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/44",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"44"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "admin-product",
+			"item": [
+				{
+					"name": "create a product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Ip13",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "1800000",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Iphone 13 128gb white",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "99",
+									"type": "text"
+								},
+								{
+									"key": "factory",
+									"value": "APPLE",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Điện thoại",
+									"type": "text"
+								},
+								{
+									"key": "sold",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "d:\\TheGioiCuaHao\\M\\doraemon\\540789162_1320988456056896_2366943360766057480_n.jpg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "d:\\TheGioiCuaHao\\M\\doraemon\\543327864_1320990729390002_2542302587011192921_n.jpg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "d:\\TheGioiCuaHao\\M\\doraemon\\FB_IMG_1688974243518.jpg"
+								}
+							],
+							"options": {
+								"formdata": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products/all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all products with pagination",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products?current=2&pageSize=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "current",
+									"value": "2"
+								},
+								{
+									"key": "pageSize",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get a product by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete a product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/products/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update a product",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Ip12 128 update",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "16900000",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Iphone 12 128gb white",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "99",
+									"type": "text"
+								},
+								{
+									"key": "factory",
+									"value": "APPLE",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "Điện thoại",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "d:\\TheGioiCuaHao\\M\\doraemon\\FB_IMG_1688974243518.jpg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "d:\\TheGioiCuaHao\\M\\doraemon\\FB_IMG_1688975816203.jpg"
+								}
+							],
+							"options": {
+								"formdata": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/products/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"products",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
